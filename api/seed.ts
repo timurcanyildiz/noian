@@ -4,12 +4,12 @@
  * bu uca istek atar.
  */
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { getSql, isDbConfigured } from "./_lib/db";
-import { ensureSchema, defaultSettings } from "./_lib/schema";
-import { requireAdmin, sendError, methodNotAllowed } from "./_lib/http";
-import { products } from "../src/data/products";
-import { categories } from "../src/data/categories";
-import { testimonials } from "../src/data/testimonials";
+import { getSql, isDbConfigured } from "./_lib/db.js";
+import { ensureSchema, defaultSettings } from "./_lib/schema.js";
+import { requireAdmin, sendError, methodNotAllowed } from "./_lib/http.js";
+import { products } from "../src/data/products.js";
+import { categories } from "../src/data/categories.js";
+import { testimonials } from "../src/data/testimonials.js";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== "POST") return methodNotAllowed(res, ["POST"]);

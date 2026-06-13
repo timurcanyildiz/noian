@@ -3,7 +3,7 @@
  * Şema, src/data/types.ts içindeki veri modeliyle eşleşir.
  * Görseller pratiklik için ürün satırında JSONB olarak tutulur.
  */
-import { getSql } from "./db";
+import { getSql } from "./db.js";
 
 export async function ensureSchema() {
   const sql = getSql();

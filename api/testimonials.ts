@@ -6,9 +6,9 @@
  *  DELETE /api/testimonials?id=...  -> sil (admin)
  */
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { getSql } from "./_lib/db";
-import { rowToTestimonial } from "./_lib/schema";
-import { readBody, requireAdmin, sendError } from "./_lib/http";
+import { getSql } from "./_lib/db.js";
+import { rowToTestimonial } from "./_lib/schema.js";
+import { readBody, requireAdmin, sendError } from "./_lib/http.js";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const sql = getSql();

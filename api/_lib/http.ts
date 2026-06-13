@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { verifyAdminToken } from "./auth";
+import { verifyAdminToken } from "./auth.js";
 
 /** JSON gövdesini güvenle okur (Vercel çoğu zaman otomatik parse eder). */
 export function readBody<T = Record<string, unknown>>(req: VercelRequest): T {

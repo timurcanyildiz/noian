@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { checkPassword, createAdminToken } from "./_lib/auth";
-import { readBody, sendError, methodNotAllowed } from "./_lib/http";
+import { checkPassword, createAdminToken } from "./_lib/auth.js";
+import { readBody, sendError, methodNotAllowed } from "./_lib/http.js";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== "POST") return methodNotAllowed(res, ["POST"]);

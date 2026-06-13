@@ -9,7 +9,7 @@
  */
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { put } from "@vercel/blob";
-import { readBody, requireAdmin, sendError } from "./_lib/http";
+import { readBody, requireAdmin, sendError } from "./_lib/http.js";
 
 export const config = {
   api: { bodyParser: { sizeLimit: "6mb" } },
