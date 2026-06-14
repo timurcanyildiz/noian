@@ -39,13 +39,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       await sql`
         INSERT INTO products (
           id, slug, name, short_description, description, price, compare_at_price,
-          category_id, images, materials, dimensions, in_stock, stock_count,
+          category_id, images, materials, dimensions, sizes, in_stock, stock_count,
           is_featured, is_new, care_instructions, created_at
         ) VALUES (
           ${p.id}, ${p.slug}, ${p.name}, ${p.shortDescription}, ${p.description},
           ${p.price}, ${p.compareAtPrice ?? null}, ${p.categoryId},
           ${JSON.stringify(p.images)}, ${JSON.stringify(p.materials)},
-          ${p.dimensions ?? null}, ${p.inStock}, ${p.stockCount ?? null},
+          ${p.dimensions ?? null}, ${JSON.stringify(p.sizes ?? [])},
+          ${p.inStock}, ${p.stockCount ?? null},
           ${p.isFeatured ?? false}, ${p.isNew ?? false},
           ${p.careInstructions ?? null}, ${p.createdAt}
         )

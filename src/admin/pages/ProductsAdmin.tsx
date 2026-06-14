@@ -88,7 +88,11 @@ export function ProductsAdmin() {
                     {p.name}
                   </p>
                   <p className="text-sm text-cocoa-400">
-                    {catName(p.categoryId)} · {formatPrice(p.price)} ·{" "}
+                    {catName(p.categoryId)} · {formatPrice(p.price)}
+                    {(p.sizes?.length ?? 0) > 0 && (
+                      <span> · {p.sizes!.length} ölçü</span>
+                    )}{" "}
+                    ·{" "}
                     {p.inStock ? (
                       <span className="text-sage-400">Stokta</span>
                     ) : (

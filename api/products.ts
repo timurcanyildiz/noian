@@ -8,11 +8,12 @@
  */
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { getSql } from "./_lib/db.js";
-import { rowToProduct } from "./_lib/schema.js";
+import { rowToProduct, ensureSchema } from "./_lib/schema.js";
 import { readBody, requireAdmin, sendError } from "./_lib/http.js";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const sql = getSql();
+  await ensureSchema();
 
   if (req.method === "GET") {
     const slug = req.query.slug as string | undefined;
@@ -36,13 +37,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     await sql`
       INSERT INTO products (
         id, slug, name, short_description, description, price, compare_at_price,
-        category_id, images, materials, dimensions, in_stock, stock_count,
+        category_id, images, materials, dimensions, sizes, in_stock, stock_count,
         is_featured, is_new, care_instructions, created_at
       ) VALUES (
         ${p.id}, ${p.slug}, ${p.name}, ${p.shortDescription ?? ""}, ${p.description ?? ""},
         ${p.price ?? 0}, ${p.compareAtPrice ?? null}, ${p.categoryId ?? null},
         ${JSON.stringify(p.images ?? [])}, ${JSON.stringify(p.materials ?? [])},
-        ${p.dimensions ?? null}, ${p.inStock ?? true}, ${p.stockCount ?? null},
+        ${p.dimensions ?? null}, ${JSON.stringify(p.sizes ?? [])},
+        ${p.inStock ?? true}, ${p.stockCount ?? null},
         ${p.isFeatured ?? false}, ${p.isNew ?? false}, ${p.careInstructions ?? null},
         ${p.createdAt ?? new Date().toISOString()}
       )
@@ -57,6 +59,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         images = EXCLUDED.images,
         materials = EXCLUDED.materials,
         dimensions = EXCLUDED.dimensions,
+        sizes = EXCLUDED.sizes,
         in_stock = EXCLUDED.in_stock,
         stock_count = EXCLUDED.stock_count,
         is_featured = EXCLUDED.is_featured,

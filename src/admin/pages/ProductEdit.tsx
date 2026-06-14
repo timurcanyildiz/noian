@@ -6,7 +6,7 @@ import { useToast } from "@/context/ToastContext";
 import { api } from "@/lib/api";
 import { slugify, generateId, cn } from "@/lib/utils";
 import { Field, Input, Textarea, Toggle, ImageUploader } from "../components";
-import type { Product, ProductImage } from "@/data/types";
+import type { Product, ProductImage, ProductSize } from "@/data/types";
 
 const empty = (): Product => ({
   id: generateId("p"),
@@ -93,6 +93,30 @@ export function ProductEdit() {
       form.images.map((img, idx) => ({ ...img, isPrimary: idx === i })),
     );
 
+  const addSize = () =>
+    set("sizes", [
+      ...(form.sizes ?? []),
+      {
+        id: generateId("sz"),
+        label: "",
+        dimensions: "",
+        inStock: true,
+        stockCount: 1,
+      },
+    ]);
+
+  const updateSize = (i: number, patch: Partial<ProductSize>) =>
+    set(
+      "sizes",
+      (form.sizes ?? []).map((s, idx) => (idx === i ? { ...s, ...patch } : s)),
+    );
+
+  const removeSize = (i: number) =>
+    set(
+      "sizes",
+      (form.sizes ?? []).filter((_, idx) => idx !== i),
+    );
+
   const save = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name.trim() || !form.slug.trim()) {
@@ -111,6 +135,7 @@ export function ProductEdit() {
         .map((m) => m.trim())
         .filter(Boolean),
       images: form.images.filter((img) => img.url),
+      sizes: (form.sizes ?? []).filter((s) => s.label.trim()),
     };
     try {
       await api.saveProduct(payload);
@@ -314,6 +339,102 @@ export function ProductEdit() {
           </div>
         </section>
 
+        {/* Ölçü seçenekleri */}
+        <section className="card p-6">
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <div>
+              <h2 className="text-xl">Ölçü Seçenekleri</h2>
+              <p className="mt-1 text-sm text-cocoa-400">
+                Aynı modelde birden fazla ölçü varsa buradan ekleyin. Boş
+                bırakırsanız tek ölçülü ürün olarak kalır.
+              </p>
+            </div>
+            <button type="button" onClick={addSize} className="btn-outline shrink-0">
+              <Plus className="h-4 w-4" /> Ölçü Ekle
+            </button>
+          </div>
+
+          {(form.sizes ?? []).length === 0 ? (
+            <p className="rounded-xl border border-dashed border-cream-300 p-5 text-center text-sm text-cocoa-400">
+              Henüz ölçü seçeneği yok. Tek ölçü için aşağıdaki &quot;Ölçüler&quot;
+              alanını kullanabilirsiniz.
+            </p>
+          ) : (
+            <div className="flex flex-col gap-4">
+              {(form.sizes ?? []).map((size, i) => (
+                <div
+                  key={size.id}
+                  className="rounded-xl border border-cream-300 p-4"
+                >
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <Field label="Etiket" hint='Örn. "Küçük", "Orta", "Büyük"'>
+                      <Input
+                        value={size.label}
+                        onChange={(e) =>
+                          updateSize(i, { label: e.target.value })
+                        }
+                        placeholder="Orta"
+                      />
+                    </Field>
+                    <Field label="Ölçüler">
+                      <Input
+                        value={size.dimensions ?? ""}
+                        onChange={(e) =>
+                          updateSize(i, { dimensions: e.target.value })
+                        }
+                        placeholder="30 x 24 x 9 cm"
+                      />
+                    </Field>
+                    <Field
+                      label="Fiyat (TL)"
+                      hint="Boş bırakırsanız temel fiyat kullanılır"
+                    >
+                      <Input
+                        type="number"
+                        min={0}
+                        value={size.price ?? ""}
+                        onChange={(e) =>
+                          updateSize(i, {
+                            price: e.target.value
+                              ? Number(e.target.value)
+                              : undefined,
+                          })
+                        }
+                      />
+                    </Field>
+                    <Field label="Stok">
+                      <Input
+                        type="number"
+                        min={0}
+                        value={size.stockCount ?? 0}
+                        onChange={(e) =>
+                          updateSize(i, {
+                            stockCount: Number(e.target.value),
+                          })
+                        }
+                      />
+                    </Field>
+                  </div>
+                  <div className="mt-3 flex items-center justify-between">
+                    <Toggle
+                      label="Stokta"
+                      checked={size.inStock}
+                      onChange={(v) => updateSize(i, { inStock: v })}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeSize(i)}
+                      className="flex items-center gap-1 text-sm font-semibold text-clay-500 hover:underline"
+                    >
+                      <Trash2 className="h-4 w-4" /> Kaldır
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+
         {/* Detaylar */}
         <section className="card p-6">
           <h2 className="mb-4 text-xl">Detaylar</h2>
@@ -324,11 +445,19 @@ export function ProductEdit() {
                 onChange={(e) => setMaterialsText(e.target.value)}
               />
             </Field>
-            <Field label="Ölçüler">
+            <Field
+              label="Ölçüler (tek ölçü)"
+              hint={
+                (form.sizes?.length ?? 0) > 0
+                  ? "Çoklu ölçü tanımlıysa bu alan kullanılmaz."
+                  : undefined
+              }
+            >
               <Input
                 value={form.dimensions ?? ""}
                 onChange={(e) => set("dimensions", e.target.value)}
                 placeholder="30 x 24 x 9 cm"
+                disabled={(form.sizes?.length ?? 0) > 0}
               />
             </Field>
             <Field label="Bakım Talimatı">

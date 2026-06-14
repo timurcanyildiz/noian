@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import { Save } from "lucide-react";
+import { Save, Plus, Trash2 } from "lucide-react";
 import { useSettings } from "@/context/SettingsContext";
 import { api } from "@/lib/api";
 import { useToast } from "@/context/ToastContext";
-import { Field, Input, Textarea, ImageUploader, SectionCard } from "../components";
-import type { SiteSettings } from "@/data/settings";
+import { Field, Input, Textarea, ImageUploader, SectionCard, Toggle } from "../components";
+import type { InstagramPost, SiteSettings } from "@/data/settings";
 
 export function SettingsAdmin() {
   const { settings, applyLocal, refresh } = useSettings();
@@ -56,6 +56,33 @@ export function SettingsAdmin() {
       </p>
 
       <div className="mt-6 flex flex-col gap-6">
+        <SectionCard
+          title="Duyuru Şeridi"
+          description="Sitenin en üstünde görünen mevsimsel / kampanya mesajı."
+        >
+          <div className="flex flex-col gap-4">
+            <Toggle
+              label="Duyuru şeridini göster"
+              checked={form.banner.enabled}
+              onChange={(v) => setField("banner", "enabled", v)}
+            />
+            <Field label="Mesaj">
+              <Input
+                value={form.banner.message}
+                onChange={(e) => setField("banner", "message", e.target.value)}
+                placeholder="Yeni koleksiyon yayında — sınırlı sayıda!"
+              />
+            </Field>
+            <Field label="Bağlantı (opsiyonel)" hint="/magaza veya tam URL">
+              <Input
+                value={form.banner.link}
+                onChange={(e) => setField("banner", "link", e.target.value)}
+                placeholder="/magaza"
+              />
+            </Field>
+          </div>
+        </SectionCard>
+
         <SectionCard title="Marka & Logo">
           <div className="flex flex-col gap-4">
             <ImageUploader
@@ -94,10 +121,19 @@ export function SettingsAdmin() {
               value={form.home.heroImageUrl}
               onChange={(url) => setField("home", "heroImageUrl", url)}
             />
-            <Field label="Başlık (Hero)">
+            <Field label="Başlık (Hero — üst satır)">
               <Input
                 value={form.home.heroTitle}
                 onChange={(e) => setField("home", "heroTitle", e.target.value)}
+              />
+            </Field>
+            <Field label="Başlık vurgusu (italik alt satır)">
+              <Input
+                value={form.home.heroTitleEmphasis}
+                onChange={(e) =>
+                  setField("home", "heroTitleEmphasis", e.target.value)
+                }
+                placeholder="el emeği çantalar"
               />
             </Field>
             <Field label="Alt Başlık">
@@ -114,6 +150,130 @@ export function SettingsAdmin() {
                 rows={3}
                 value={form.home.aboutText}
                 onChange={(e) => setField("home", "aboutText", e.target.value)}
+              />
+            </Field>
+          </div>
+        </SectionCard>
+
+        <SectionCard
+          title="Instagram Galerisi"
+          description="Ana sayfada gösterilecek atölye kareleri (en fazla 6)."
+        >
+          <div className="flex flex-col gap-4">
+            <Field label="Bölüm Başlığı">
+              <Input
+                value={form.home.instagramTitle}
+                onChange={(e) =>
+                  setField("home", "instagramTitle", e.target.value)
+                }
+              />
+            </Field>
+            <Field label="Alt Metin">
+              <Input
+                value={form.home.instagramSubtitle}
+                onChange={(e) =>
+                  setField("home", "instagramSubtitle", e.target.value)
+                }
+              />
+            </Field>
+            {form.home.instagramPosts.map((post, i) => (
+              <div
+                key={i}
+                className="rounded-xl border border-cream-300 p-4"
+              >
+                <ImageUploader
+                  label={`Görsel ${i + 1}`}
+                  value={post.imageUrl}
+                  onChange={(url) => {
+                    const next = [...form.home.instagramPosts];
+                    next[i] = { ...next[i], imageUrl: url };
+                    setField("home", "instagramPosts", next);
+                  }}
+                />
+                <Field label="Bağlantı (opsiyonel)">
+                  <Input
+                    value={post.link ?? ""}
+                    onChange={(e) => {
+                      const next = [...form.home.instagramPosts];
+                      next[i] = { ...next[i], link: e.target.value };
+                      setField("home", "instagramPosts", next);
+                    }}
+                    placeholder="https://instagram.com/p/..."
+                  />
+                </Field>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const next = form.home.instagramPosts.filter(
+                      (_, idx) => idx !== i,
+                    );
+                    setField("home", "instagramPosts", next);
+                  }}
+                  className="mt-2 flex items-center gap-1 text-sm font-semibold text-clay-500"
+                >
+                  <Trash2 className="h-4 w-4" /> Kaldır
+                </button>
+              </div>
+            ))}
+            {form.home.instagramPosts.length < 6 && (
+              <button
+                type="button"
+                onClick={() => {
+                  const next: InstagramPost[] = [
+                    ...form.home.instagramPosts,
+                    { imageUrl: "" },
+                  ];
+                  setField("home", "instagramPosts", next);
+                }}
+                className="btn-outline"
+              >
+                <Plus className="h-4 w-4" /> Görsel Ekle
+              </button>
+            )}
+          </div>
+        </SectionCard>
+
+        <SectionCard
+          title="SEO & Sosyal Önizleme"
+          description="Arama motorları ve paylaşım kartları için."
+        >
+          <div className="flex flex-col gap-4">
+            <Field label="Site Açıklaması (meta description)">
+              <Textarea
+                rows={3}
+                value={form.seo.defaultDescription}
+                onChange={(e) =>
+                  setField("seo", "defaultDescription", e.target.value)
+                }
+              />
+            </Field>
+            <ImageUploader
+              label="Sosyal Önizleme Görseli (OG image)"
+              value={form.seo.ogImageUrl}
+              onChange={(url) => setField("seo", "ogImageUrl", url)}
+            />
+          </div>
+        </SectionCard>
+
+        <SectionCard
+          title="Pazarlama & Analitik"
+          description="Google Analytics ve Meta Pixel kimlikleri."
+        >
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field label="Google Analytics ID" hint="Örn. G-XXXXXXXXXX">
+              <Input
+                value={form.marketing.googleAnalyticsId}
+                onChange={(e) =>
+                  setField("marketing", "googleAnalyticsId", e.target.value)
+                }
+              />
+            </Field>
+            <Field label="Meta Pixel ID">
+              <Input
+                value={form.marketing.metaPixelId}
+                onChange={(e) =>
+                  setField("marketing", "metaPixelId", e.target.value)
+                }
               />
             </Field>
           </div>

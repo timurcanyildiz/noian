@@ -40,6 +40,17 @@ export interface ProductImage {
   sortOrder?: number;
 }
 
+/** Aynı modelde farklı ölçü seçenekleri (opsiyonel). */
+export interface ProductSize {
+  id: string;
+  label: string;
+  dimensions?: string;
+  /** Boşsa ürünün temel fiyatı kullanılır. */
+  price?: number;
+  stockCount?: number;
+  inStock: boolean;
+}
+
 /** Tablo: products — Satılan el emeği çantalar */
 export interface Product {
   id: string;
@@ -52,7 +63,8 @@ export interface Product {
   categoryId: string;
   images: ProductImage[];
   materials: string[]; // Kumaş / malzeme bilgisi
-  dimensions?: string; // Örn. "30 x 22 x 10 cm"
+  dimensions?: string; // Tek ölçülü ürünler için
+  sizes?: ProductSize[];
   inStock: boolean;
   stockCount?: number;
   isFeatured?: boolean;
@@ -64,12 +76,15 @@ export interface Product {
 /** Tablo: cart_items — Sepet kalemleri (oturum/kullanıcı bazlı) */
 export interface CartItem {
   productId: string;
+  sizeId?: string;
   quantity: number;
 }
 
 /** Sepette gösterim için ürünle zenginleştirilmiş kalem (türetilmiş, DB'de saklanmaz) */
 export interface CartLine extends CartItem {
   product: Product;
+  sizeLabel?: string;
+  unitPrice: number;
   lineTotal: number;
 }
 
@@ -102,6 +117,7 @@ export interface OrderItem {
   orderId: string;
   productId: string;
   productName: string; // Sipariş anındaki ad (snapshot)
+  sizeLabel?: string; // Seçilen ölçü (snapshot)
   unitPrice: number; // Sipariş anındaki fiyat (snapshot)
   quantity: number;
 }

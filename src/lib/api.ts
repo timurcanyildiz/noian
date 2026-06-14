@@ -14,7 +14,7 @@
  */
 import { localStore } from "@/lib/localStore";
 import type { Category, Order, Product, Testimonial } from "@/data/types";
-import { defaultSettings, type SiteSettings } from "@/data/settings";
+import { mergeSiteSettings, type SiteSettings } from "@/data/settings";
 
 const TOKEN_KEY = "noian_admin_token";
 
@@ -115,13 +115,7 @@ export const api = {
     withFallback(
       async () => {
         const s = await request<Partial<SiteSettings>>("/api/settings");
-        return {
-          brand: { ...defaultSettings.brand, ...s.brand },
-          contact: { ...defaultSettings.contact, ...s.contact },
-          shipping: { ...defaultSettings.shipping, ...s.shipping },
-          legal: { ...defaultSettings.legal, ...s.legal },
-          home: { ...defaultSettings.home, ...s.home },
-        };
+        return mergeSiteSettings(s);
       },
       () => localStore.getSettings(),
     ),

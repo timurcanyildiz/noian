@@ -13,9 +13,14 @@
   }
 
   body {
-    @apply bg-cream-100 text-cocoa-500 font-sans antialiased;
-    /* iOS güvenli alan desteği (alt sticky çubuklar için) */
+    @apply text-cocoa-500 font-sans antialiased;
     min-height: 100dvh;
+    background-color: #faf6ef;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(181, 101, 74, 0.07), transparent),
+      radial-gradient(circle at 100% 100%, rgba(183, 191, 163, 0.12), transparent 40%),
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    background-attachment: fixed;
   }
 
   h1,
@@ -32,19 +37,18 @@
 }
 
 @layer components {
-  /* Marka düğmeleri */
   .btn {
     @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold
-      transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-none
+      transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-none
       focus-visible:ring-2 focus-visible:ring-clay-300 focus-visible:ring-offset-2 focus-visible:ring-offset-cream-100;
   }
 
   .btn-primary {
-    @apply btn bg-clay-400 text-cream-50 hover:bg-clay-500 active:bg-clay-600 shadow-soft;
+    @apply btn bg-clay-400 text-cream-50 hover:bg-clay-500 hover:shadow-soft active:bg-clay-600 shadow-soft;
   }
 
   .btn-outline {
-    @apply btn border border-clay-200 bg-transparent text-cocoa-600 hover:bg-clay-50;
+    @apply btn border border-clay-200 bg-cream-50/80 text-cocoa-600 hover:border-clay-300 hover:bg-clay-50;
   }
 
   .btn-ghost {
@@ -52,8 +56,8 @@
   }
 
   .input-field {
-    @apply w-full rounded-xl border border-cream-300 bg-cream-50 px-4 py-3 text-cocoa-600
-      placeholder:text-cocoa-400/60 transition-colors focus:border-clay-300 focus:outline-none
+    @apply w-full rounded-xl border border-cream-300 bg-cream-50/90 px-4 py-3 text-cocoa-600
+      placeholder:text-cocoa-400/60 transition-all duration-200 focus:border-clay-300 focus:outline-none
       focus:ring-2 focus:ring-clay-100;
   }
 
@@ -70,16 +74,32 @@
   }
 
   .card {
-    @apply rounded-2xl border border-cream-200 bg-cream-50 shadow-card;
+    @apply rounded-2xl border border-cream-200/90 bg-cream-50/90 shadow-card backdrop-blur-sm
+      transition-shadow duration-300;
   }
 
-  /* Sahibinin değiştirmesi gereken yerleri işaretleyen rozet */
+  .card-hover {
+    @apply card hover:border-clay-200/60 hover:shadow-soft;
+  }
+
   .owner-note {
     @apply rounded-xl border border-dashed border-clay-300 bg-clay-50/70 px-3 py-2 text-xs leading-relaxed text-clay-600;
   }
 
   .badge {
     @apply inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold;
+  }
+
+  .hero-display {
+    @apply font-serif leading-[1.1] tracking-tight text-cocoa-600;
+  }
+
+  .hero-display-emphasis {
+    @apply mt-1 block font-serif italic text-clay-400;
+  }
+
+  .section-reveal {
+    @apply animate-fade-in-up;
   }
 }
 

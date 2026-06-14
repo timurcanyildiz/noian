@@ -16,6 +16,23 @@ export function OrderConfirmation() {
     if (orderNumber) api.getOrderByNumber(orderNumber).then(setOrder);
   }, [orderNumber]);
 
+  useEffect(() => {
+    if (!order) return;
+    if (window.fbq && settings.marketing.metaPixelId) {
+      window.fbq("track", "Purchase", {
+        value: order.total,
+        currency: "TRY",
+      });
+    }
+    if (window.gtag && settings.marketing.googleAnalyticsId) {
+      window.gtag("event", "purchase", {
+        transaction_id: order.orderNumber,
+        value: order.total,
+        currency: "TRY",
+      });
+    }
+  }, [order, settings.marketing]);
+
   return (
     <div className="container animate-fade-in py-16">
       <div className="mx-auto max-w-2xl text-center">
@@ -64,7 +81,11 @@ export function OrderConfirmation() {
               {order.items.map((it) => (
                 <li key={it.id} className="flex justify-between">
                   <span className="text-cocoa-500">
-                    {it.productName} × {it.quantity}
+                    {it.productName}
+                    {it.sizeLabel && (
+                      <span className="text-cocoa-400"> ({it.sizeLabel})</span>
+                    )}{" "}
+                    × {it.quantity}
                   </span>
                   <span className="font-semibold text-cocoa-600">
                     {formatPrice(it.unitPrice * it.quantity)}

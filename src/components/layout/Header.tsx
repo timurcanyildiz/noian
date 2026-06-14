@@ -34,7 +34,7 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-cream-200 bg-cream-100/90 backdrop-blur">
-      <div className="container flex h-16 items-center justify-between gap-4">
+      <div className="container flex h-[4.5rem] items-center justify-between gap-4">
         {/* Sol: mobil menü + logo */}
         <div className="flex items-center gap-2">
           <button
@@ -45,7 +45,7 @@ export function Header() {
             <Menu className="h-5 w-5" />
           </button>
           <Link to="/" className="flex items-center gap-2">
-            <BrandMark />
+            <BrandMark size="header" showName={!settings.brand.logoUrl} />
           </Link>
         </div>
 

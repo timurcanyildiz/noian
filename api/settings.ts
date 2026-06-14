@@ -8,7 +8,6 @@ import { getSql } from "./_lib/db.js";
 import { defaultSettings } from "./_lib/schema.js";
 import { readBody, requireAdmin, sendError } from "./_lib/http.js";
 
-/** Kayıtlı ayarları varsayılanlarla birleştirir (yeni alanlar için geriye uyumluluk). */
 function mergeSettings(stored: Record<string, unknown> | null | undefined) {
   const s = stored ?? {};
   return {
@@ -16,7 +15,16 @@ function mergeSettings(stored: Record<string, unknown> | null | undefined) {
     contact: { ...defaultSettings.contact, ...(s.contact as object) },
     shipping: { ...defaultSettings.shipping, ...(s.shipping as object) },
     legal: { ...defaultSettings.legal, ...(s.legal as object) },
-    home: { ...defaultSettings.home, ...(s.home as object) },
+    banner: { ...defaultSettings.banner, ...(s.banner as object) },
+    marketing: { ...defaultSettings.marketing, ...(s.marketing as object) },
+    seo: { ...defaultSettings.seo, ...(s.seo as object) },
+    home: {
+      ...defaultSettings.home,
+      ...(s.home as object),
+      instagramPosts:
+        (s.home as { instagramPosts?: unknown[] })?.instagramPosts ??
+        defaultSettings.home.instagramPosts,
+    },
   };
 }
 

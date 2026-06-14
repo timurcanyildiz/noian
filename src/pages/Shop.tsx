@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { ProductCard } from "@/components/ProductCard";
+import { SeoHead } from "@/components/SeoHead";
 import { useCatalog } from "@/context/CatalogContext";
 import { Spinner } from "@/components/common";
 import { cn } from "@/lib/utils";
@@ -38,6 +39,10 @@ export function Shop() {
 
   return (
     <div className="animate-fade-in">
+      <SeoHead
+        title="Mağaza"
+        description="El emeği kumaş çantalar — sınırlı sayıda, özenle üretildi."
+      />
       <div className="border-b border-cream-200 bg-cream-50">
         <div className="container py-10">
           <h1 className="text-3xl sm:text-4xl">Mağaza</h1>

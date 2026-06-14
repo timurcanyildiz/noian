@@ -8,7 +8,7 @@ import {
   Lock,
   ShieldCheck,
 } from "lucide-react";
-import { useCart } from "@/context/CartContext";
+import { useCart, cartItemKey } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import { FormField, validators } from "@/components/FormField";
 import { formatPrice, generateOrderNumber, cn } from "@/lib/utils";
@@ -115,7 +115,8 @@ export function Checkout() {
       orderId: "",
       productId: l.product.id,
       productName: l.product.name,
-      unitPrice: l.product.price,
+      sizeLabel: l.sizeLabel,
+      unitPrice: l.unitPrice,
       quantity: l.quantity,
     }));
 
@@ -315,11 +316,18 @@ export function Checkout() {
 
             <ul className="mt-4 flex flex-col gap-3 border-b border-cream-200 pb-4">
               {lines.map((l) => (
-                <li key={l.productId} className="flex gap-3 text-sm">
+                <li key={cartItemKey(l)} className="flex gap-3 text-sm">
                   <span className="grid h-6 min-w-6 place-items-center rounded-full bg-cream-200 px-1 text-xs font-bold text-cocoa-500">
                     {l.quantity}
                   </span>
-                  <span className="flex-1 text-cocoa-500">{l.product.name}</span>
+                  <span className="flex-1 text-cocoa-500">
+                    {l.product.name}
+                    {l.sizeLabel && (
+                      <span className="block text-xs text-cocoa-400">
+                        Ölçü: {l.sizeLabel}
+                      </span>
+                    )}
+                  </span>
                   <span className="font-semibold text-cocoa-600">
                     {formatPrice(l.lineTotal)}
                   </span>

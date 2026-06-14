@@ -10,34 +10,51 @@ export function BrandMark({
   size = "md",
 }: {
   showName?: boolean;
-  size?: "md" | "lg";
+  size?: "md" | "lg" | "header";
 }) {
   const { settings } = useSettings();
-  const dim = size === "lg" ? "h-12 w-12 text-2xl" : "h-9 w-9 text-lg";
+  const hasLogo = Boolean(settings.brand.logoUrl);
+
+  const badgeDim =
+    size === "header" ? "h-11 w-11 text-xl" : size === "lg" ? "h-12 w-12 text-2xl" : "h-9 w-9 text-lg";
+
+  const logoClass =
+    size === "header"
+      ? "h-11 w-auto max-w-[200px] object-contain sm:h-12 sm:max-w-[220px]"
+      : size === "lg"
+        ? "h-12 w-auto max-w-[160px] object-contain"
+        : "h-10 w-auto max-w-[140px] object-contain";
+
+  const nameClass =
+    size === "header"
+      ? "text-xl sm:text-2xl"
+      : size === "lg"
+        ? "text-2xl"
+        : "text-xl";
 
   return (
-    <span className="flex items-center gap-2">
-      {settings.brand.logoUrl ? (
+    <span className="flex items-center gap-2.5">
+      {hasLogo ? (
         <img
           src={settings.brand.logoUrl}
           alt={settings.brand.name}
-          className={cn("rounded-full object-cover", dim)}
+          className={logoClass}
         />
       ) : (
         <span
           className={cn(
-            "grid place-items-center rounded-full bg-clay-400 font-serif text-cream-50",
-            dim,
+            "grid shrink-0 place-items-center rounded-full bg-clay-400 font-serif text-cream-50",
+            badgeDim,
           )}
         >
           N
         </span>
       )}
-      {showName && (
+      {showName && !hasLogo && (
         <span
           className={cn(
             "font-serif tracking-wide text-cocoa-600",
-            size === "lg" ? "text-2xl" : "text-xl",
+            nameClass,
           )}
         >
           {settings.brand.name}

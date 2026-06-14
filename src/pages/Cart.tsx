@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Trash2, ShoppingBag, ArrowRight, Truck } from "lucide-react";
-import { useCart } from "@/context/CartContext";
+import { useCart, cartItemKey } from "@/context/CartContext";
 import { getPrimaryImage } from "@/data/products";
 import { formatPrice } from "@/lib/utils";
 import { QuantityStepper } from "@/components/common";
@@ -53,7 +53,7 @@ export function Cart() {
               const img = getPrimaryImage(line.product);
               return (
                 <li
-                  key={line.productId}
+                  key={cartItemKey(line)}
                   className="card flex gap-4 p-4"
                 >
                   <Link
@@ -76,7 +76,9 @@ export function Cart() {
                         {line.product.name}
                       </Link>
                       <button
-                        onClick={() => removeItem(line.productId)}
+                        onClick={() =>
+                          removeItem(line.productId, line.sizeId)
+                        }
                         className="grid h-8 w-8 place-items-center rounded-full text-cocoa-400 hover:bg-cream-200 hover:text-clay-500"
                         aria-label="Ürünü kaldır"
                       >
@@ -84,13 +86,20 @@ export function Cart() {
                       </button>
                     </div>
                     <p className="text-sm text-cocoa-400">
-                      {formatPrice(line.product.price)}
+                      {line.sizeLabel && (
+                        <span className="mr-2 rounded-full bg-cream-200 px-2 py-0.5 text-xs font-semibold text-cocoa-600">
+                          {line.sizeLabel}
+                        </span>
+                      )}
+                      {formatPrice(line.unitPrice)}
                     </p>
 
                     <div className="mt-auto flex items-center justify-between pt-3">
                       <QuantityStepper
                         value={line.quantity}
-                        onChange={(v) => setQuantity(line.productId, v)}
+                        onChange={(v) =>
+                          setQuantity(line.productId, v, line.sizeId)
+                        }
                       />
                       <span className="font-semibold text-cocoa-600">
                         {formatPrice(line.lineTotal)}

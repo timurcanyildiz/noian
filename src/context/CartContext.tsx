@@ -1,12 +1,6 @@
 /**
  * ============================================================================
- *  SEPET (CART) — KALICI (localStorage) DEMO SEPET
- * ============================================================================
- *  Sepet, tarayıcı kapansa bile korunur (localStorage). Misafir kullanıcılar
- *  da sepet kullanabilir (guest checkout dostu).
- *
- *  Gerçek backend'de: Girişli kullanıcılar için sepet `cart_items` tablosunda
- *  da saklanabilir. Bu mantık yine yalnızca bu dosyada değişir.
+ *  SEPET (CART) — KALICI (localStorage)
  * ============================================================================
  */
 import {
@@ -21,6 +15,12 @@ import {
 import type { CartItem, CartLine, Product } from "@/data/types";
 import { useCatalog } from "@/context/CatalogContext";
 import { useSettings } from "@/context/SettingsContext";
+import {
+  cartItemKey,
+  getSizeLabel,
+  getUnitPrice,
+  matchCartItem,
+} from "@/lib/productHelpers";
 
 const STORAGE_CART = "noian_cart";
 
@@ -32,9 +32,9 @@ interface CartContextValue {
   shippingCost: number;
   total: number;
   isFreeShipping: boolean;
-  addItem: (productId: string, quantity?: number) => void;
-  removeItem: (productId: string) => void;
-  setQuantity: (productId: string, quantity: number) => void;
+  addItem: (productId: string, quantity?: number, sizeId?: string) => void;
+  removeItem: (productId: string, sizeId?: string) => void;
+  setQuantity: (productId: string, quantity: number, sizeId?: string) => void;
   clear: () => void;
 }
 
@@ -62,32 +62,39 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }, [items]);
 
-  const addItem = useCallback((productId: string, quantity = 1) => {
-    setItems((prev) => {
-      const existing = prev.find((i) => i.productId === productId);
-      if (existing) {
-        return prev.map((i) =>
-          i.productId === productId
-            ? { ...i, quantity: i.quantity + quantity }
-            : i,
-        );
-      }
-      return [...prev, { productId, quantity }];
-    });
-  }, []);
+  const addItem = useCallback(
+    (productId: string, quantity = 1, sizeId?: string) => {
+      setItems((prev) => {
+        const existing = prev.find((i) => matchCartItem(i, productId, sizeId));
+        if (existing) {
+          return prev.map((i) =>
+            matchCartItem(i, productId, sizeId)
+              ? { ...i, quantity: i.quantity + quantity }
+              : i,
+          );
+        }
+        return [...prev, { productId, sizeId, quantity }];
+      });
+    },
+    [],
+  );
 
-  const removeItem = useCallback((productId: string) => {
-    setItems((prev) => prev.filter((i) => i.productId !== productId));
+  const removeItem = useCallback((productId: string, sizeId?: string) => {
+    setItems((prev) =>
+      prev.filter((i) => !matchCartItem(i, productId, sizeId)),
+    );
   }, []);
 
   const setQuantity = useCallback(
-    (productId: string, quantity: number) => {
+    (productId: string, quantity: number, sizeId?: string) => {
       if (quantity <= 0) {
-        removeItem(productId);
+        removeItem(productId, sizeId);
         return;
       }
       setItems((prev) =>
-        prev.map((i) => (i.productId === productId ? { ...i, quantity } : i)),
+        prev.map((i) =>
+          matchCartItem(i, productId, sizeId) ? { ...i, quantity } : i,
+        ),
       );
     },
     [removeItem],
@@ -100,10 +107,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
       .map((item) => {
         const product = products.find((p) => p.id === item.productId) as Product;
         if (!product) return null;
+        const unitPrice = getUnitPrice(product, item.sizeId);
         return {
           ...item,
           product,
-          lineTotal: product.price * item.quantity,
+          sizeLabel: getSizeLabel(product, item.sizeId),
+          unitPrice,
+          lineTotal: unitPrice * item.quantity,
         };
       })
       .filter(Boolean) as CartLine[];
@@ -162,3 +172,6 @@ export function useCart() {
   if (!ctx) throw new Error("useCart, CartProvider içinde kullanılmalıdır.");
   return ctx;
 }
+
+// eslint-disable-next-line react-refresh/only-export-components
+export { cartItemKey };

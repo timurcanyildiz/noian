@@ -12,7 +12,7 @@
 import { products as seedProducts } from "@/data/products";
 import { categories as seedCategories } from "@/data/categories";
 import { testimonials as seedTestimonials } from "@/data/testimonials";
-import { defaultSettings, type SiteSettings } from "@/data/settings";
+import { defaultSettings, mergeSiteSettings, type SiteSettings } from "@/data/settings";
 import type { Category, Order, Product, Testimonial } from "@/data/types";
 
 const K = {
@@ -97,7 +97,8 @@ export const localStore = {
   },
 
   // ---- Ayarlar ----
-  getSettings: (): SiteSettings => read(K.settings, defaultSettings),
+  getSettings: (): SiteSettings =>
+    mergeSiteSettings(read(K.settings, defaultSettings)),
   saveSettings: (s: SiteSettings): SiteSettings => {
     write(K.settings, s);
     return s;

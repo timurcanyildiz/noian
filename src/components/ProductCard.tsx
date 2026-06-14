@@ -3,24 +3,28 @@ import { ShoppingBag } from "lucide-react";
 import type { Product } from "@/data/types";
 import { getPrimaryImage } from "@/data/products";
 import { formatPrice } from "@/lib/utils";
-import { useCart } from "@/context/CartContext";
-import { useToast } from "@/context/ToastContext";
+import {
+  getLowStockLabel,
+  getPriceLabel,
+  hasSizes,
+  isLowStock,
+  isProductAvailable,
+} from "@/lib/productHelpers";
 
 export function ProductCard({ product }: { product: Product }) {
-  const { addItem } = useCart();
-  const { notify } = useToast();
   const image = getPrimaryImage(product);
+  const available = isProductAvailable(product);
+  const multiSize = hasSizes(product);
+  const minPrice = multiSize
+    ? Math.min(...product.sizes!.map((s) => s.price ?? product.price))
+    : product.price;
 
-  const handleAdd = (e: React.MouseEvent) => {
-    e.preventDefault();
-    addItem(product.id);
-    notify(`${product.name} sepete eklendi.`);
-  };
+  const lowStock = isLowStock(product);
 
   return (
     <Link
       to={`/urun/${product.slug}`}
-      className="group flex flex-col overflow-hidden rounded-2xl border border-cream-200 bg-cream-50 shadow-card transition-shadow hover:shadow-soft"
+      className="card-hover group flex flex-col overflow-hidden"
     >
       <div className="relative aspect-[4/5] overflow-hidden bg-cream-200">
         <img
@@ -33,23 +37,28 @@ export function ProductCard({ product }: { product: Product }) {
           {product.isNew && (
             <span className="badge bg-sage-300/90 text-cocoa-700">Yeni</span>
           )}
-          {product.compareAtPrice && (
+          {product.compareAtPrice && !multiSize && (
             <span className="badge bg-clay-400 text-cream-50">İndirim</span>
           )}
-          {!product.inStock && (
+          {multiSize && (
+            <span className="badge bg-cream-100/95 text-cocoa-600">
+              {product.sizes!.length} ölçü
+            </span>
+          )}
+          {lowStock && available && (
+            <span className="badge bg-clay-400 text-cream-50">
+              {getLowStockLabel(product) ?? "Son parçalar"}
+            </span>
+          )}
+          {!available && (
             <span className="badge bg-cocoa-500/85 text-cream-50">Tükendi</span>
           )}
         </div>
 
-        {/* Masaüstünde hover ile beliren hızlı sepet butonu */}
-        {product.inStock && (
-          <button
-            onClick={handleAdd}
-            className="absolute bottom-3 right-3 hidden h-11 w-11 place-items-center rounded-full bg-clay-400 text-cream-50 shadow-soft transition-all hover:bg-clay-500 group-hover:grid sm:group-hover:grid"
-            aria-label={`${product.name} ürününü sepete ekle`}
-          >
+        {available && !multiSize && (
+          <span className="absolute bottom-3 right-3 hidden h-11 w-11 place-items-center rounded-full bg-clay-400 text-cream-50 shadow-soft transition-all group-hover:grid sm:group-hover:grid">
             <ShoppingBag className="h-5 w-5" />
-          </button>
+          </span>
         )}
       </div>
 
@@ -62,9 +71,14 @@ export function ProductCard({ product }: { product: Product }) {
         </p>
         <div className="mt-3 flex items-center gap-2">
           <span className="font-semibold text-cocoa-600">
-            {formatPrice(product.price)}
+            {formatPrice(multiSize ? minPrice : product.price)}
+            {multiSize && (
+              <span className="ml-1 text-sm font-normal text-cocoa-400">
+                {getPriceLabel(product)}
+              </span>
+            )}
           </span>
-          {product.compareAtPrice && (
+          {product.compareAtPrice && !multiSize && (
             <span className="text-sm text-cocoa-400 line-through">
               {formatPrice(product.compareAtPrice)}
             </span>

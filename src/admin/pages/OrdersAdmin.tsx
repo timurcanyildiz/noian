@@ -97,7 +97,14 @@ export function OrdersAdmin() {
                       {o.items.map((it) => (
                         <li key={it.id} className="flex justify-between">
                           <span>
-                            {it.productName} × {it.quantity}
+                            {it.productName}
+                            {it.sizeLabel && (
+                              <span className="text-cocoa-400">
+                                {" "}
+                                ({it.sizeLabel})
+                              </span>
+                            )}{" "}
+                            × {it.quantity}
                           </span>
                           <span>{formatPrice(it.unitPrice * it.quantity)}</span>
                         </li>

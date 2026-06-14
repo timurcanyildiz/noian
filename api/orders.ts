@@ -8,8 +8,9 @@
  */
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { getSql } from "./_lib/db.js";
-import { rowToOrder } from "./_lib/schema.js";
+import { rowToOrder, defaultSettings } from "./_lib/schema.js";
 import { readBody, requireAdmin, sendError } from "./_lib/http.js";
+import { sendOrderConfirmationEmail } from "./_lib/email.js";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const sql = getSql();
@@ -52,6 +53,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       )
       ON CONFLICT (id) DO NOTHING;
     `;
+
+    // Sipariş onay e-postası (Resend API anahtarı varsa)
+    const settingsRows = (await sql`SELECT data FROM settings WHERE id = 1 LIMIT 1`) as any[];
+    const brandName = settingsRows.length
+      ? settingsRows[0].data?.brand?.name ?? defaultSettings.brand.name
+      : defaultSettings.brand.name;
+    void sendOrderConfirmationEmail(o, brandName);
+
     return res.status(201).json({ ok: true });
   }
 

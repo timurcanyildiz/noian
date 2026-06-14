@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   ChevronLeft,
@@ -15,6 +15,19 @@ import { useCart } from "@/context/CartContext";
 import { useToast } from "@/context/ToastContext";
 import { useCatalog } from "@/context/CatalogContext";
 import { useSettings } from "@/context/SettingsContext";
+import {
+  getLowStockLabel,
+  getSize,
+  getUnitPrice,
+  hasSizes,
+  isLowStock,
+  isProductAvailable,
+  isSizeInStock,
+} from "@/lib/productHelpers";
+import { SeoHead } from "@/components/SeoHead";
+import { whatsappLink, whatsappProductMessage } from "@/lib/whatsapp";
+import { getPrimaryImage } from "@/data/products";
+import { MessageCircle } from "lucide-react";
 
 export function ProductDetail() {
   const { slug } = useParams();
@@ -26,6 +39,20 @@ export function ProductDetail() {
   const { notify } = useToast();
   const [qty, setQty] = useState(1);
   const [activeImg, setActiveImg] = useState(0);
+  const [selectedSizeId, setSelectedSizeId] = useState<string>("");
+
+  useEffect(() => {
+    if (!product) return;
+    if (hasSizes(product)) {
+      const firstAvailable =
+        product.sizes!.find((s) => s.inStock)?.id ?? product.sizes![0]?.id ?? "";
+      setSelectedSizeId(firstAvailable);
+    } else {
+      setSelectedSizeId("");
+    }
+    setQty(1);
+    setActiveImg(0);
+  }, [product?.id]);
 
   if (loading) {
     return <Spinner label="Ürün yükleniyor…" />;
@@ -50,18 +77,42 @@ export function ProductDetail() {
     .filter((p) => p.categoryId === product.categoryId && p.id !== product.id)
     .slice(0, 4);
 
+  const multiSize = hasSizes(product);
+  const selectedSize = getSize(product, selectedSizeId);
+  const displayPrice = getUnitPrice(product, selectedSizeId || undefined);
+  const canAdd = multiSize
+    ? isSizeInStock(product, selectedSizeId)
+    : product.inStock;
+  const anyAvailable = isProductAvailable(product);
+
   const handleAdd = () => {
-    addItem(product.id, qty);
-    notify(`${product.name} (${qty} adet) sepete eklendi.`);
+    if (multiSize && !selectedSizeId) {
+      notify("Lütfen bir ölçü seçin.", "info");
+      return;
+    }
+    addItem(product.id, qty, selectedSizeId || undefined);
+    const sizeNote = selectedSize ? ` (${selectedSize.label})` : "";
+    notify(`${product.name}${sizeNote} — ${qty} adet sepete eklendi.`);
   };
 
   const handleBuyNow = () => {
-    addItem(product.id, qty);
+    if (multiSize && !selectedSizeId) {
+      notify("Lütfen bir ölçü seçin.", "info");
+      return;
+    }
+    addItem(product.id, qty, selectedSizeId || undefined);
     navigate("/sepet");
   };
 
   return (
     <div className="animate-fade-in pb-24 lg:pb-0">
+      <SeoHead
+        title={product.name}
+        description={product.shortDescription || product.description}
+        image={getPrimaryImage(product)?.url}
+        path={`/urun/${product.slug}`}
+        product={product}
+      />
       <div className="container py-6">
         <nav className="flex items-center gap-1 text-sm text-cocoa-400">
           <Link to="/magaza" className="flex items-center gap-1 hover:text-clay-400">
@@ -82,7 +133,6 @@ export function ProductDetail() {
       </div>
 
       <div className="container grid gap-10 pb-12 lg:grid-cols-2">
-        {/* Görseller */}
         <div>
           <div className="aspect-[4/5] overflow-hidden rounded-2xl bg-cream-200 shadow-card">
             <img
@@ -113,7 +163,6 @@ export function ProductDetail() {
           )}
         </div>
 
-        {/* Bilgi */}
         <div>
           <div className="flex items-center gap-2">
             {product.isNew && (
@@ -128,9 +177,9 @@ export function ProductDetail() {
 
           <div className="mt-4 flex items-center gap-3">
             <span className="text-2xl font-semibold text-cocoa-600">
-              {formatPrice(product.price)}
+              {formatPrice(displayPrice)}
             </span>
-            {product.compareAtPrice && (
+            {product.compareAtPrice && !multiSize && (
               <span className="text-lg text-cocoa-400 line-through">
                 {formatPrice(product.compareAtPrice)}
               </span>
@@ -143,17 +192,68 @@ export function ProductDetail() {
             {product.description}
           </p>
 
-          {/* Stok durumu */}
+          {multiSize && (
+            <div className="mt-6">
+              <p className="text-sm font-semibold text-cocoa-600">Ölçü seçin</p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {product.sizes!.map((size) => (
+                  <button
+                    key={size.id}
+                    type="button"
+                    disabled={!size.inStock}
+                    onClick={() => setSelectedSizeId(size.id)}
+                    className={cn(
+                      "rounded-full border px-4 py-2.5 text-sm font-semibold transition-colors",
+                      selectedSizeId === size.id
+                        ? "border-clay-400 bg-clay-50 text-clay-500"
+                        : "border-cream-300 bg-cream-50 text-cocoa-600 hover:border-clay-300",
+                      !size.inStock && "cursor-not-allowed opacity-45 line-through",
+                    )}
+                  >
+                    {size.label}
+                    {size.dimensions && (
+                      <span className="ml-1 font-normal text-cocoa-400">
+                        · {size.dimensions}
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
+              {selectedSize?.dimensions && (
+                <p className="mt-2 text-sm text-cocoa-400">
+                  Seçilen ölçü: <strong>{selectedSize.dimensions}</strong>
+                </p>
+              )}
+            </div>
+          )}
+
           <div className="mt-5">
-            {product.inStock ? (
+            {canAdd ? (
               <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-sage-400">
                 <Check className="h-4 w-4" /> Stokta var
-                {product.stockCount && product.stockCount <= 5 && (
+                {isLowStock(product, selectedSizeId || undefined) && (
+                  <span className="rounded-full bg-clay-100 px-2 py-0.5 text-xs font-bold text-clay-500">
+                    {getLowStockLabel(product, selectedSizeId || undefined)}
+                  </span>
+                )}
+                {!isLowStock(product, selectedSizeId || undefined) &&
+                  selectedSize?.stockCount &&
+                  selectedSize.stockCount <= 5 && (
+                  <span className="text-clay-400">
+                    {" "}
+                    · Son {selectedSize.stockCount} adet
+                  </span>
+                )}
+                {!multiSize && product.stockCount && product.stockCount <= 5 && (
                   <span className="text-clay-400">
                     {" "}
                     · Son {product.stockCount} adet
                   </span>
                 )}
+              </span>
+            ) : anyAvailable ? (
+              <span className="text-sm font-semibold text-clay-500">
+                Bu ölçü şu an tükendi
               </span>
             ) : (
               <span className="text-sm font-semibold text-clay-500">
@@ -162,31 +262,43 @@ export function ProductDetail() {
             )}
           </div>
 
-          {/* Masaüstü sepet aksiyonları */}
           <div className="mt-6 hidden flex-wrap items-center gap-3 lg:flex">
             <QuantityStepper value={qty} onChange={setQty} />
             <button
               onClick={handleAdd}
-              disabled={!product.inStock}
+              disabled={!canAdd}
               className="btn-primary flex-1"
             >
               <ShoppingBag className="h-4 w-4" /> Sepete Ekle
             </button>
             <button
               onClick={handleBuyNow}
-              disabled={!product.inStock}
+              disabled={!canAdd}
               className="btn-outline"
             >
               Hemen Al
             </button>
+            {settings.contact.whatsapp && (
+              <a
+                href={whatsappLink(
+                  settings.contact.whatsapp,
+                  whatsappProductMessage(product.name),
+                )}
+                target="_blank"
+                rel="noreferrer"
+                className="btn-outline border-sage-300 text-sage-400 hover:bg-sage-200/40"
+              >
+                <MessageCircle className="h-4 w-4" />
+                WhatsApp ile Sor
+              </a>
+            )}
           </div>
 
-          {/* Detaylar */}
           <dl className="mt-8 divide-y divide-cream-200 border-y border-cream-200 text-sm">
             {product.materials.length > 0 && (
               <Row label="Malzeme" value={product.materials.join(", ")} />
             )}
-            {product.dimensions && (
+            {!multiSize && product.dimensions && (
               <Row label="Ölçüler" value={product.dimensions} />
             )}
             {product.careInstructions && (
@@ -194,7 +306,6 @@ export function ProductDetail() {
             )}
           </dl>
 
-          {/* Güven rozetleri */}
           <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
             <Trust
               icon={Truck}
@@ -207,7 +318,6 @@ export function ProductDetail() {
         </div>
       </div>
 
-      {/* Benzer ürünler */}
       {related.length > 0 && (
         <section className="container py-12">
           <h2 className="mb-6 text-2xl">Bunları da sevebilirsiniz</h2>
@@ -219,17 +329,16 @@ export function ProductDetail() {
         </section>
       )}
 
-      {/* MOBİL sabit alt aksiyon çubuğu */}
       <div className="fixed inset-x-0 bottom-0 z-40 border-t border-cream-200 bg-cream-50/95 px-4 py-3 pb-safe backdrop-blur lg:hidden">
         <div className="flex items-center gap-3">
           <QuantityStepper value={qty} onChange={setQty} />
           <button
             onClick={handleAdd}
-            disabled={!product.inStock}
+            disabled={!canAdd}
             className="btn-primary flex-1"
           >
             <ShoppingBag className="h-4 w-4" />
-            {product.inStock ? "Sepete Ekle" : "Tükendi"}
+            {canAdd ? "Sepete Ekle" : "Tükendi"}
           </button>
         </div>
       </div>

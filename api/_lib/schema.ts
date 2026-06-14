@@ -37,6 +37,10 @@ export async function ensureSchema() {
     );
   `;
   await sql`
+    ALTER TABLE products
+    ADD COLUMN IF NOT EXISTS sizes jsonb NOT NULL DEFAULT '[]'::jsonb;
+  `;
+  await sql`
     CREATE TABLE IF NOT EXISTS orders (
       id text PRIMARY KEY,
       order_number text UNIQUE NOT NULL,
@@ -86,6 +90,7 @@ export function rowToProduct(r: any) {
     images: r.images ?? [],
     materials: r.materials ?? [],
     dimensions: r.dimensions ?? undefined,
+    sizes: r.sizes ?? [],
     inStock: r.in_stock,
     stockCount: r.stock_count ?? undefined,
     isFeatured: r.is_featured ?? false,
@@ -169,11 +174,29 @@ export const defaultSettings = {
     mersisNo: "[MERSİS NO — varsa]",
   },
   home: {
-    heroTitle: "Annemin elinden çıkan el emeği çantalar",
+    heroTitle: "Annemin elinden çıkan",
+    heroTitleEmphasis: "el emeği çantalar",
     heroSubtitle:
       "Noian Bags, sevgiyle ve sabırla dikilen, sınırlı sayıda üretilen kumaş çantaların evi.",
     aboutText:
       "Noian Bags, annemin yıllardır kumaşlarla kurduğu sevgi bağının bir uzantısı. Her çanta, mutfak masasında başlayan, sabırla biten küçük bir yolculuk.",
     heroImageUrl: "",
+    instagramTitle: "Atölyeden kareler",
+    instagramSubtitle: "Dikiş masamızdan, günlük ilhamlarımızdan.",
+    instagramPosts: [],
+  },
+  banner: {
+    enabled: false,
+    message: "Yeni koleksiyonumuz yayında — sınırlı sayıda üretildi.",
+    link: "/magaza",
+  },
+  marketing: {
+    googleAnalyticsId: "",
+    metaPixelId: "",
+  },
+  seo: {
+    defaultDescription:
+      "Noian Bags — annemin ellerinden çıkan, özenle dikilmiş el emeği kumaş çantalar. Sınırlı sayıda, sevgiyle üretildi.",
+    ogImageUrl: "",
   },
 };
