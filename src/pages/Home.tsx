@@ -11,16 +11,6 @@ import {
 import { ProductCard } from "@/components/ProductCard";
 import { SectionHeading, Rating } from "@/components/common";
 import { SeoHead } from "@/components/SeoHead";
-import { ScrollReveal } from "@/components/home/ScrollReveal";
-import {
-  HomeCtaBand,
-  HomeMiniFaq,
-  HomeProcess,
-  HomeQuote,
-  HomeStats,
-  HomeTrustStrip,
-  HomeWhyNoian,
-} from "@/components/home/HomeSections";
 import { useCatalog } from "@/context/CatalogContext";
 import { useSettings } from "@/context/SettingsContext";
 import { DEFAULT_HERO_IMAGE } from "@/data/settings";
@@ -33,7 +23,6 @@ export function Home() {
   const featured = getFeaturedProducts();
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const posts = settings.home.instagramPosts.filter((p) => p.imageUrl);
-  const highlightQuote = testimonials[0];
 
   useEffect(() => {
     api.listTestimonials().then(setTestimonials);
@@ -70,13 +59,8 @@ export function Home() {
         includeSiteSchema
       />
 
-      {/* ——— HERO ——— */}
       <section className="relative overflow-hidden">
-        <div
-          className="pointer-events-none absolute -right-32 top-20 h-72 w-72 rounded-full bg-clay-100/40 blur-3xl"
-          aria-hidden
-        />
-        <div className="container grid items-center gap-10 py-14 lg:grid-cols-2 lg:py-24">
+        <div className="container grid items-center gap-10 py-14 lg:grid-cols-2 lg:py-20">
           <div className="max-w-xl animate-fade-in-up">
             <span className="badge bg-clay-50 text-clay-500">
               {settings.brand.tagline}
@@ -89,7 +73,7 @@ export function Home() {
                 </span>
               )}
             </h1>
-            <p className="mt-5 animate-fade-in-up-delay-1 text-lg leading-relaxed text-cocoa-400">
+            <p className="mt-5 animate-fade-in-up-delay-1 text-lg text-cocoa-400">
               {settings.home.heroSubtitle}
             </p>
             <div className="mt-8 flex animate-fade-in-up-delay-2 flex-wrap gap-3">
@@ -103,7 +87,7 @@ export function Home() {
           </div>
 
           <div className="relative animate-fade-in-up-delay-2">
-            <div className="aspect-[4/5] overflow-hidden rounded-2xl border border-cream-200/80 shadow-soft ring-1 ring-clay-100/50">
+            <div className="aspect-[4/5] overflow-hidden rounded-2xl border border-cream-200/80 shadow-soft">
               <img
                 src={settings.home.heroImageUrl || DEFAULT_HERO_IMAGE}
                 alt="El yapımı kumaş çanta"
@@ -118,92 +102,72 @@ export function Home() {
         </div>
       </section>
 
-      {/* ——— GÜVEN ŞERİDİ ——— */}
       <section className="border-y border-cream-200/80 bg-cream-50/80 backdrop-blur-sm">
         <div className="container grid gap-6 py-10 sm:grid-cols-2 lg:grid-cols-4">
           {FEATURES.map((f, i) => (
-            <ScrollReveal key={f.title} delay={i * 60}>
-              <div className="flex items-start gap-3">
-                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-clay-50 text-clay-400 ring-1 ring-clay-100">
-                  <f.icon className="h-5 w-5" />
-                </span>
-                <div>
-                  <h3 className="font-serif text-lg text-cocoa-600">{f.title}</h3>
-                  <p className="text-sm text-cocoa-400">{f.text}</p>
-                </div>
+            <div
+              key={f.title}
+              className="flex items-start gap-3"
+              style={{ animationDelay: `${i * 80}ms` }}
+            >
+              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-clay-50 text-clay-400 ring-1 ring-clay-100">
+                <f.icon className="h-5 w-5" />
+              </span>
+              <div>
+                <h3 className="font-serif text-lg text-cocoa-600">{f.title}</h3>
+                <p className="text-sm text-cocoa-400">{f.text}</p>
               </div>
-            </ScrollReveal>
-          ))}
-        </div>
-      </section>
-
-      <HomeStats settings={settings} />
-
-      {/* ——— KATEGORİLER ——— */}
-      <section className="container py-20">
-        <ScrollReveal>
-          <SectionHeading
-            eyebrow="Koleksiyon"
-            title="Kategoriler"
-            subtitle="İhtiyacınıza ve tarzınıza uygun parçayı bulun."
-          />
-        </ScrollReveal>
-        <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {categories.map((c, i) => (
-            <ScrollReveal key={c.id} delay={i * 80}>
-              <Link
-                to={`/magaza?kategori=${c.slug}`}
-                className="card-hover group relative overflow-hidden p-6"
-              >
-                <span
-                  className="pointer-events-none absolute -right-2 -top-4 font-serif text-6xl text-clay-100 transition-colors group-hover:text-clay-200/80"
-                  aria-hidden
-                >
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <h3 className="relative font-serif text-xl text-cocoa-600 transition-colors group-hover:text-clay-400">
-                  {c.name}
-                </h3>
-                <p className="relative mt-2 text-sm leading-relaxed text-cocoa-400">
-                  {c.description}
-                </p>
-                <span className="relative mt-5 inline-flex items-center gap-1 text-sm font-semibold text-clay-400">
-                  İncele{" "}
-                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                </span>
-              </Link>
-            </ScrollReveal>
-          ))}
-        </div>
-      </section>
-
-      {/* ——— ÖNE ÇIKAN ÜRÜNLER ——— */}
-      <section className="bg-cream-200/40 py-20">
-        <div className="container">
-          <ScrollReveal>
-            <div className="flex items-end justify-between gap-4">
-              <SectionHeading
-                align="left"
-                eyebrow="Seçtiklerimiz"
-                title="Öne çıkan çantalar"
-                subtitle="Atölyeden çıkan, en sevilen parçalar."
-              />
-              <Link
-                to="/magaza"
-                className="hidden shrink-0 items-center gap-1 text-sm font-semibold text-clay-400 hover:text-clay-500 sm:flex"
-              >
-                Tümünü gör <ArrowRight className="h-4 w-4" />
-              </Link>
             </div>
-          </ScrollReveal>
-          <div className="mt-12 grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
-            {featured.map((p, i) => (
-              <ScrollReveal key={p.id} delay={i * 70}>
-                <ProductCard product={p} />
-              </ScrollReveal>
+          ))}
+        </div>
+      </section>
+
+      <section className="container py-16 section-reveal">
+        <SectionHeading
+          eyebrow="Koleksiyon"
+          title="Kategoriler"
+          subtitle="İhtiyacınıza ve tarzınıza uygun parçayı bulun."
+        />
+        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {categories.map((c) => (
+            <Link
+              key={c.id}
+              to={`/magaza?kategori=${c.slug}`}
+              className="card-hover group p-6"
+            >
+              <h3 className="font-serif text-xl text-cocoa-600 transition-colors group-hover:text-clay-400">
+                {c.name}
+              </h3>
+              <p className="mt-2 text-sm text-cocoa-400">{c.description}</p>
+              <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-clay-400">
+                İncele <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+              </span>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className="bg-cream-200/40 py-16">
+        <div className="container section-reveal">
+          <div className="flex items-end justify-between gap-4">
+            <SectionHeading
+              align="left"
+              eyebrow="Seçtiklerimiz"
+              title="Öne çıkan çantalar"
+            />
+            <Link
+              to="/magaza"
+              className="hidden shrink-0 items-center gap-1 text-sm font-semibold text-clay-400 hover:text-clay-500 sm:flex"
+            >
+              Tümünü gör <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+          <div className="mt-10 grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
+            {featured.map((p) => (
+              <ProductCard key={p.id} product={p} />
             ))}
           </div>
-          <div className="mt-10 text-center sm:hidden">
+          <div className="mt-8 text-center sm:hidden">
             <Link to="/magaza" className="btn-outline">
               Tüm ürünleri gör
             </Link>
@@ -211,76 +175,26 @@ export function Home() {
         </div>
       </section>
 
-      <HomeProcess />
-
-      {/* ——— HİKAYE ——— */}
-      <section className="container grid items-center gap-12 py-20 lg:grid-cols-2">
-        <ScrollReveal>
-          <div className="relative aspect-[5/4] overflow-hidden rounded-2xl border border-cream-200/80 shadow-soft">
-            <img
-              src="https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=1000&q=80"
-              alt="Dikiş atölyesi"
-              className="h-full w-full object-cover transition-transform duration-700 hover:scale-[1.03]"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-cocoa-700/20 to-transparent" />
-          </div>
-        </ScrollReveal>
-        <ScrollReveal delay={120}>
-          <div>
+      {posts.length > 0 && (
+        <section className="container py-16 section-reveal">
+          <div className="flex flex-wrap items-end justify-between gap-4">
             <SectionHeading
               align="left"
-              eyebrow="Hikayemiz"
-              title="Bir annenin sabrı, bir ailenin emeği"
+              eyebrow="Instagram"
+              title={settings.home.instagramTitle}
+              subtitle={settings.home.instagramSubtitle}
             />
-            <p className="mt-5 text-lg leading-relaxed text-cocoa-400">
-              {settings.home.aboutText}
-            </p>
-            <ul className="mt-6 flex flex-col gap-3 text-sm text-cocoa-500">
-              <li className="flex items-center gap-2">
-                <span className="h-1.5 w-1.5 rounded-full bg-clay-400" />
-                Ev atölyesinden çıkan samimi üretim
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="h-1.5 w-1.5 rounded-full bg-clay-400" />
-                Her dikişte özen, her parçada hikâye
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="h-1.5 w-1.5 rounded-full bg-clay-400" />
-                Sınırlı sayıda, tekrarlanmayan koleksiyonlar
-              </li>
-            </ul>
-            <Link to="/hakkimizda" className="btn-outline mt-8">
-              Hikayenin tamamı <ArrowRight className="h-4 w-4" />
-            </Link>
+            <a
+              href={settings.contact.instagram}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-clay-400 hover:text-clay-500"
+            >
+              <Instagram className="h-4 w-4" />
+              @noianbags
+            </a>
           </div>
-        </ScrollReveal>
-      </section>
-
-      <HomeWhyNoian />
-
-      {/* ——— INSTAGRAM ——— */}
-      {posts.length > 0 && (
-        <section className="container py-20">
-          <ScrollReveal>
-            <div className="flex flex-wrap items-end justify-between gap-4">
-              <SectionHeading
-                align="left"
-                eyebrow="Instagram"
-                title={settings.home.instagramTitle}
-                subtitle={settings.home.instagramSubtitle}
-              />
-              <a
-                href={settings.contact.instagram}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-2 text-sm font-semibold text-clay-400 hover:text-clay-500"
-              >
-                <Instagram className="h-4 w-4" />
-                Bizi takip edin
-              </a>
-            </div>
-          </ScrollReveal>
-          <div className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+          <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
             {posts.slice(0, 6).map((post, i) => {
               const cell = (
                 <div className="group relative aspect-square overflow-hidden rounded-2xl border border-cream-200 bg-cream-200 shadow-card">
@@ -290,70 +204,66 @@ export function Home() {
                     loading="lazy"
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
-                  <div className="absolute inset-0 flex items-end bg-gradient-to-t from-cocoa-700/50 via-transparent to-transparent p-3 opacity-0 transition-opacity group-hover:opacity-100">
-                    <span className="text-xs font-semibold text-cream-50">
-                      Görüntüle
-                    </span>
-                  </div>
+                  <div className="absolute inset-0 bg-cocoa-700/0 transition-colors group-hover:bg-cocoa-700/10" />
                 </div>
               );
-              return (
-                <ScrollReveal key={i} delay={i * 50}>
-                  {post.link ? (
-                    <a href={post.link} target="_blank" rel="noreferrer">
-                      {cell}
-                    </a>
-                  ) : (
-                    cell
-                  )}
-                </ScrollReveal>
+              return post.link ? (
+                <a key={i} href={post.link} target="_blank" rel="noreferrer">
+                  {cell}
+                </a>
+              ) : (
+                <div key={i}>{cell}</div>
               );
             })}
           </div>
         </section>
       )}
 
-      <HomeQuote testimonial={highlightQuote} />
+      <section className="container grid items-center gap-10 py-16 lg:grid-cols-2 section-reveal">
+        <div className="aspect-[5/4] overflow-hidden rounded-2xl border border-cream-200/80 shadow-soft">
+          <img
+            src="https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=1000&q=80"
+            alt="Dikiş atölyesi"
+            className="h-full w-full object-cover"
+          />
+        </div>
+        <div>
+          <SectionHeading
+            align="left"
+            eyebrow="Hikayemiz"
+            title="Bir annenin sabrı, bir ailenin emeği"
+          />
+          <p className="mt-4 text-cocoa-400">{settings.home.aboutText}</p>
+          <Link to="/hakkimizda" className="btn-outline mt-6">
+            Hikayenin tamamı <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
+      </section>
 
-      {/* ——— YORUMLAR ——— */}
-      {testimonials.length > 0 && (
-        <section className="bg-cream-200/40 py-20">
-          <div className="container">
-            <ScrollReveal>
-              <SectionHeading
-                eyebrow="Müşterilerimiz"
-                title="Sizden gelenler"
-                subtitle="Gerçek alıcıların deneyimleri."
-              />
-            </ScrollReveal>
-            <div className="mt-12 grid gap-6 md:grid-cols-3">
-              {testimonials.map((t, i) => (
-                <ScrollReveal key={t.id} delay={i * 90}>
-                  <figure className="card-hover flex h-full flex-col p-6">
-                    <Rating value={t.rating} />
-                    <blockquote className="mt-3 flex-1 leading-relaxed text-cocoa-500">
-                      “{t.text}”
-                    </blockquote>
-                    <figcaption className="mt-4 text-sm font-semibold text-cocoa-600">
-                      {t.authorName}
-                      {t.location && (
-                        <span className="font-normal text-cocoa-400">
-                          {" "}
-                          · {t.location}
-                        </span>
-                      )}
-                    </figcaption>
-                  </figure>
-                </ScrollReveal>
-              ))}
-            </div>
+      <section className="bg-cream-200/40 py-16">
+        <div className="container section-reveal">
+          <SectionHeading eyebrow="Müşterilerimiz" title="Sizden gelenler" />
+          <div className="mt-10 grid gap-6 md:grid-cols-3">
+            {testimonials.map((t) => (
+              <figure key={t.id} className="card-hover flex h-full flex-col p-6">
+                <Rating value={t.rating} />
+                <blockquote className="mt-3 flex-1 text-cocoa-500">
+                  “{t.text}”
+                </blockquote>
+                <figcaption className="mt-4 text-sm font-semibold text-cocoa-600">
+                  {t.authorName}
+                  {t.location && (
+                    <span className="font-normal text-cocoa-400">
+                      {" "}
+                      · {t.location}
+                    </span>
+                  )}
+                </figcaption>
+              </figure>
+            ))}
           </div>
-        </section>
-      )}
-
-      <HomeTrustStrip settings={settings} />
-      <HomeMiniFaq settings={settings} />
-      <HomeCtaBand settings={settings} />
+        </div>
+      </section>
     </div>
   );
 }

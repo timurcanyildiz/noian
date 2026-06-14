@@ -101,10 +101,6 @@
   .section-reveal {
     @apply animate-fade-in-up;
   }
-
-  .home-gradient-text {
-    @apply bg-gradient-to-r from-clay-400 to-clay-600 bg-clip-text text-transparent;
-  }
 }
 
 @layer utilities {
