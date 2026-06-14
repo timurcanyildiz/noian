@@ -99,6 +99,10 @@ export function ProductEdit() {
       notify("Ürün adı ve bağlantı (slug) zorunludur.", "info");
       return;
     }
+    if (!form.categoryId) {
+      notify("Lütfen bir kategori seçin.", "info");
+      return;
+    }
     setSaving(true);
     const payload: Product = {
       ...form,
@@ -162,6 +166,28 @@ export function ProductEdit() {
                 onChange={(e) => set("shortDescription", e.target.value)}
               />
             </Field>
+            <Field
+              label="Kategori"
+              hint={
+                categories.length === 0
+                  ? "Önce Kategoriler bölümünden kategori ekleyin."
+                  : "Mağazada hangi koleksiyonda görüneceğini seçin."
+              }
+            >
+              <select
+                value={form.categoryId}
+                onChange={(e) => set("categoryId", e.target.value)}
+                className="input-field"
+                required
+              >
+                <option value="">Kategori seçin…</option>
+                {categories.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            </Field>
             <Field label="Detaylı Açıklama">
               <Textarea
                 value={form.description}
@@ -199,20 +225,6 @@ export function ProductEdit() {
                   )
                 }
               />
-            </Field>
-            <Field label="Kategori">
-              <select
-                value={form.categoryId}
-                onChange={(e) => set("categoryId", e.target.value)}
-                className="input-field"
-              >
-                <option value="">Kategori seçin…</option>
-                {categories.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
             </Field>
             <Field label="Stok Adedi">
               <Input

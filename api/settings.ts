@@ -8,12 +8,24 @@ import { getSql } from "./_lib/db.js";
 import { defaultSettings } from "./_lib/schema.js";
 import { readBody, requireAdmin, sendError } from "./_lib/http.js";
 
+/** Kayıtlı ayarları varsayılanlarla birleştirir (yeni alanlar için geriye uyumluluk). */
+function mergeSettings(stored: Record<string, unknown> | null | undefined) {
+  const s = stored ?? {};
+  return {
+    brand: { ...defaultSettings.brand, ...(s.brand as object) },
+    contact: { ...defaultSettings.contact, ...(s.contact as object) },
+    shipping: { ...defaultSettings.shipping, ...(s.shipping as object) },
+    legal: { ...defaultSettings.legal, ...(s.legal as object) },
+    home: { ...defaultSettings.home, ...(s.home as object) },
+  };
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const sql = getSql();
 
   if (req.method === "GET") {
     const rows = (await sql`SELECT data FROM settings WHERE id = 1 LIMIT 1`) as any[];
-    const data = rows.length ? rows[0].data : defaultSettings;
+    const data = rows.length ? mergeSettings(rows[0].data) : defaultSettings;
     return res.status(200).json(data);
   }
 

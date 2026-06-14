@@ -34,8 +34,14 @@ export interface SiteSettings {
     heroTitle: string;
     heroSubtitle: string;
     aboutText: string;
+    /** Boşsa varsayılan hero görseli kullanılır. */
+    heroImageUrl: string;
   };
 }
+
+/** Ana sayfa hero görseli yüklenmemişse kullanılan varsayılan. */
+export const DEFAULT_HERO_IMAGE =
+  "https://images.unsplash.com/photo-1591561954557-26941169b49e?auto=format&fit=crop&w=1100&q=80";
 
 export const defaultSettings: SiteSettings = {
   brand: {
@@ -71,5 +77,6 @@ export const defaultSettings: SiteSettings = {
       "Noian Bags, sevgiyle ve sabırla dikilen, sınırlı sayıda üretilen kumaş çantaların evi. Her parçada bir hikâye, her dikişte bir emek var.",
     aboutText:
       "Noian Bags, annemin yıllardır kumaşlarla kurduğu sevgi bağının bir uzantısı. Her çanta, mutfak masasında başlayan, sabırla biten küçük bir yolculuk.",
+    heroImageUrl: "",
   },
 };

@@ -115,8 +115,13 @@ export const api = {
     withFallback(
       async () => {
         const s = await request<Partial<SiteSettings>>("/api/settings");
-        // Eksik alanlar olursa varsayılanlarla birleştir
-        return { ...defaultSettings, ...s } as SiteSettings;
+        return {
+          brand: { ...defaultSettings.brand, ...s.brand },
+          contact: { ...defaultSettings.contact, ...s.contact },
+          shipping: { ...defaultSettings.shipping, ...s.shipping },
+          legal: { ...defaultSettings.legal, ...s.legal },
+          home: { ...defaultSettings.home, ...s.home },
+        };
       },
       () => localStore.getSettings(),
     ),

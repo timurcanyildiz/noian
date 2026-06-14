@@ -11,6 +11,7 @@ import { ProductCard } from "@/components/ProductCard";
 import { SectionHeading, Rating } from "@/components/common";
 import { useCatalog } from "@/context/CatalogContext";
 import { useSettings } from "@/context/SettingsContext";
+import { DEFAULT_HERO_IMAGE } from "@/data/settings";
 import { api } from "@/lib/api";
 import type { Testimonial } from "@/data/types";
 
@@ -75,7 +76,7 @@ export function Home() {
           <div className="relative">
             <div className="aspect-[4/5] overflow-hidden rounded-2xl shadow-soft">
               <img
-                src="https://images.unsplash.com/photo-1591561954557-26941169b49e?auto=format&fit=crop&w=1100&q=80"
+                src={settings.home.heroImageUrl || DEFAULT_HERO_IMAGE}
                 alt="El yapımı kumaş çanta"
                 className="h-full w-full object-cover"
               />

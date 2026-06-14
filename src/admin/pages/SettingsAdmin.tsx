@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Save } from "lucide-react";
 import { useSettings } from "@/context/SettingsContext";
 import { api } from "@/lib/api";
@@ -12,7 +12,10 @@ export function SettingsAdmin() {
   const [form, setForm] = useState<SiteSettings>(settings);
   const [saving, setSaving] = useState(false);
 
-  // settings yüklendikçe form'u senkronla (ilk render boş gelirse)
+  useEffect(() => {
+    setForm(settings);
+  }, [settings]);
+
   const sync = () => setForm(settings);
 
   type Section = keyof SiteSettings;
@@ -86,6 +89,11 @@ export function SettingsAdmin() {
 
         <SectionCard title="Ana Sayfa Metinleri">
           <div className="flex flex-col gap-4">
+            <ImageUploader
+              label="Hero Görseli (ana sayfa sağdaki büyük fotoğraf)"
+              value={form.home.heroImageUrl}
+              onChange={(url) => setField("home", "heroImageUrl", url)}
+            />
             <Field label="Başlık (Hero)">
               <Input
                 value={form.home.heroTitle}

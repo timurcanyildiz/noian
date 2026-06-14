@@ -174,5 +174,6 @@ export const defaultSettings = {
       "Noian Bags, sevgiyle ve sabırla dikilen, sınırlı sayıda üretilen kumaş çantaların evi.",
     aboutText:
       "Noian Bags, annemin yıllardır kumaşlarla kurduğu sevgi bağının bir uzantısı. Her çanta, mutfak masasında başlayan, sabırla biten küçük bir yolculuk.",
+    heroImageUrl: "",
   },
 };

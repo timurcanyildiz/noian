@@ -11,11 +11,14 @@ export function ProductsAdmin() {
   const { products, categories, refresh, loading } = useCatalog();
   const { notify } = useToast();
   const [q, setQ] = useState("");
+  const [catFilter, setCatFilter] = useState("");
   const [confirmId, setConfirmId] = useState<string | null>(null);
 
-  const filtered = products.filter((p) =>
-    p.name.toLowerCase().includes(q.toLowerCase()),
-  );
+  const filtered = products.filter((p) => {
+    const matchesQuery = p.name.toLowerCase().includes(q.toLowerCase());
+    const matchesCat = !catFilter || p.categoryId === catFilter;
+    return matchesQuery && matchesCat;
+  });
 
   const catName = (id: string) =>
     categories.find((c) => c.id === id)?.name ?? "—";
@@ -39,14 +42,28 @@ export function ProductsAdmin() {
         </Link>
       </div>
 
-      <div className="relative mt-6">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-cocoa-400" />
-        <input
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder="Ürün ara…"
-          className="input-field pl-10"
-        />
+      <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-cocoa-400" />
+          <input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Ürün ara…"
+            className="input-field pl-10"
+          />
+        </div>
+        <select
+          value={catFilter}
+          onChange={(e) => setCatFilter(e.target.value)}
+          className="input-field sm:w-52"
+        >
+          <option value="">Tüm kategoriler</option>
+          {categories.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.name}
+            </option>
+          ))}
+        </select>
       </div>
 
       {loading ? (
