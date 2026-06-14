@@ -22,11 +22,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
   if (!(await requireAdmin(req, res))) return;
 
-  if (!process.env.BLOB_READ_WRITE_TOKEN) {
+  // Vercel Blob: eski token (BLOB_READ_WRITE_TOKEN) veya yeni OIDC (BLOB_STORE_ID + VERCEL_OIDC_TOKEN)
+  const hasBlob =
+    process.env.BLOB_READ_WRITE_TOKEN || process.env.BLOB_STORE_ID;
+  if (!hasBlob) {
     return sendError(
       res,
       500,
-      "Vercel Blob bağlı değil. Vercel panelinden bir Blob deposu oluşturup projeye bağlayın.",
+      "Vercel Blob bağlı değil. Vercel panelinden Storage → Blob oluşturup bu projeye bağlayın.",
     );
   }
 
@@ -45,10 +48,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const buffer = Buffer.from(match[2], "base64");
   const safeName = `${Date.now()}-${filename.replace(/[^a-zA-Z0-9._-]/g, "_")}`;
 
-  const blob = await put(safeName, buffer, {
-    access: "public",
-    contentType,
-  });
-
-  res.status(200).json({ url: blob.url });
+  try {
+    const blob = await put(safeName, buffer, {
+      access: "public",
+      contentType,
+    });
+    res.status(200).json({ url: blob.url });
+  } catch (err) {
+    console.error("Blob upload failed:", err);
+    return sendError(
+      res,
+      500,
+      "Görsel yüklenemedi. Blob deposunun projeye bağlı olduğundan emin olun ve yeniden deploy edin.",
+    );
+  }
 }
