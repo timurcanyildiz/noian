@@ -74,8 +74,6 @@ export function Home() {
 
           <div className="relative">
             <div className="aspect-[4/5] overflow-hidden rounded-2xl shadow-soft">
-              {/* OWNER: Bu büyük görseli annenizin atölyesinden / çantalarından
-                  gerçek bir fotoğrafla değiştirin. */}
               <img
                 src="https://images.unsplash.com/photo-1591561954557-26941169b49e?auto=format&fit=crop&w=1100&q=80"
                 alt="El yapımı kumaş çanta"
@@ -165,7 +163,6 @@ export function Home() {
       {/* HİKAYE ŞERİDİ */}
       <section className="container grid items-center gap-10 py-16 lg:grid-cols-2">
         <div className="aspect-[5/4] overflow-hidden rounded-2xl shadow-soft">
-          {/* OWNER: Annenizin dikiş yaparken çekilmiş gerçek bir fotoğrafı çok güzel durur. */}
           <img
             src="https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=1000&q=80"
             alt="Dikiş atölyesi"

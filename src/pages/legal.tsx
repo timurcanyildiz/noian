@@ -1,15 +1,4 @@
-/**
- * ============================================================================
- *  YASAL & GÜVEN SAYFALARI
- * ============================================================================
- *  ⚠️ ÖNEMLİ — SAHİBİNE NOT:
- *  Aşağıdaki metinler ÖRNEK / YER TUTUCUDUR. Şirket/iletişim/kargo bilgileri
- *  artık Yönetim Paneli → Ayarlar bölümünden düzenlenebilir. Sözleşme metinleri
- *  ise yasal zorunluluktur; bir mali müşavir/avukattan destek almanız önerilir.
- * ============================================================================
- */
 import { StaticPage, H2, P, UL } from "@/components/StaticPage";
-import { OwnerNote } from "@/components/common";
 import { useSettings } from "@/context/SettingsContext";
 
 export function ShippingPolicy() {
@@ -20,10 +9,6 @@ export function ShippingPolicy() {
       title="Kargo Politikası"
       intro="Siparişlerinizi sevgiyle paketliyor, özenle yola çıkarıyoruz."
     >
-      <OwnerNote>
-        Kargo süresi ve ücretlerini <strong>Yönetim Paneli → Ayarlar</strong>
-        bölümünden güncelleyebilirsiniz.
-      </OwnerNote>
       <H2>Kargo Süresi</H2>
       <P>
         Ürünlerimiz el yapımı olduğu için siparişiniz hazırlandıktan sonra
@@ -55,10 +40,6 @@ export function ReturnsExchange() {
       title="İade ve Değişim"
       intro="Memnuniyetiniz bizim için değerli. Koşulsuz, güvenli iade."
     >
-      <OwnerNote>
-        İade koşullarını kendi politikanıza göre düzenleyin. Tüketici mevzuatı
-        gereği bazı haklar zorunludur.
-      </OwnerNote>
       <H2>Cayma Hakkı</H2>
       <P>
         Ürünü teslim aldığınız tarihten itibaren <strong>14 gün</strong> içinde
@@ -92,10 +73,6 @@ export function PrivacyPolicy() {
       title="Gizlilik Politikası"
       intro="Kişisel verilerinizin güvenliği bizim için önemlidir."
     >
-      <OwnerNote>
-        Bu metin örnektir. KVKK uyumlu nihai metni bir uzmana hazırlatmanız
-        önerilir.
-      </OwnerNote>
       <H2>Hangi Verileri Topluyoruz?</H2>
       <UL>
         <li>Ad, soyad, e-posta, telefon ve teslimat adresi bilgileri.</li>
@@ -127,13 +104,8 @@ export function DistanceSalesContract() {
   return (
     <StaticPage
       title="Mesafeli Satış Sözleşmesi"
-      intro="Bu sayfa, siparişlerde geçerli olacak mesafeli satış sözleşmesi taslağıdır."
+      intro="İnternet sitemiz üzerinden verilen siparişlere ilişkin mesafeli satış sözleşmesi."
     >
-      <OwnerNote>
-        Bu bir <strong>yer tutucu taslaktır</strong> ve yasal olarak geçerli
-        değildir. Şirket bilgilerini <strong>Yönetim Paneli → Ayarlar</strong>
-        bölümünden doldurun ve bir hukuk/mali müşavir onayından geçirin.
-      </OwnerNote>
       <H2>1. Taraflar — SATICI Bilgileri</H2>
       <UL>
         <li>Unvan: {l.companyTitle}</li>
@@ -153,11 +125,11 @@ export function DistanceSalesContract() {
       <H2>3. Cayma Hakkı</H2>
       <P>
         ALICI, malı teslim aldığı tarihten itibaren 14 gün içinde cayma hakkına
-        sahiptir. [Detayları İade ve Değişim politikanıza göre düzenleyin.]
+        sahiptir. Detaylar için İade ve Değişim sayfamıza bakınız.
       </P>
       <H2>4. Teslimat ve Ödeme</H2>
       <P>
-        Ödeme [ödeme sağlayıcısı] aracılığıyla alınır. Teslimat{" "}
+        Ödeme, güvenli ödeme altyapısı üzerinden alınır. Teslimat{" "}
         {settings.shipping.carrierNote.toLowerCase()}
       </P>
     </StaticPage>
@@ -172,11 +144,6 @@ export function PreliminaryInfo() {
       title="Ön Bilgilendirme Formu"
       intro="Sipariş öncesi bilmeniz gereken temel bilgiler."
     >
-      <OwnerNote>
-        <strong>Yer tutucu form.</strong> Mesafeli sözleşmeler yönetmeliği
-        gereği bu form sipariş onayından önce sunulmalıdır. Bilgileri Ayarlar'dan
-        tamamlayın.
-      </OwnerNote>
       <H2>Satıcı Bilgileri</H2>
       <UL>
         <li>Unvan: {l.companyTitle}</li>

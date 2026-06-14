@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { StaticPage } from "@/components/StaticPage";
-import { OwnerNote } from "@/components/common";
 import { cn } from "@/lib/utils";
 import { useSettings } from "@/context/SettingsContext";
 
@@ -40,11 +39,7 @@ export function Faq() {
       title="Sıkça Sorulan Sorular"
       intro="Merak ettiklerinizin yanıtları burada. Aradığınızı bulamazsanız bize yazın."
     >
-      <OwnerNote>
-        Bu soru-cevapları kendi sürecinize göre düzenleyebilir, yenilerini
-        ekleyebilirsiniz. (<code>src/pages/Faq.tsx</code>)
-      </OwnerNote>
-      <div className="mt-6 flex flex-col gap-3">
+      <div className="flex flex-col gap-3">
         {FAQS.map((item, i) => (
           <div key={i} className="card overflow-hidden">
             <button

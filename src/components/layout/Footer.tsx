@@ -20,8 +20,6 @@ const LINKS = {
     { to: "/gizlilik-politikasi", label: "Gizlilik Politikası" },
     { to: "/mesafeli-satis-sozlesmesi", label: "Mesafeli Satış Sözleşmesi" },
     { to: "/on-bilgilendirme-formu", label: "Ön Bilgilendirme Formu" },
-    { to: "/sahip-rehberi", label: "Site Sahibi Rehberi" },
-    { to: "/admin", label: "Yönetim Paneli" },
   ],
 };
 

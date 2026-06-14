@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { Heart, Scissors, Leaf } from "lucide-react";
-import { OwnerNote } from "@/components/common";
 
 export function About() {
   return (
@@ -26,7 +25,6 @@ export function About() {
           </p>
         </div>
         <div className="aspect-[4/5] overflow-hidden rounded-2xl shadow-soft">
-          {/* OWNER: Annenizin gerçek fotoğrafı buraya çok yakışır. */}
           <img
             src="https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=1000&q=80"
             alt="El işi dikiş"
@@ -67,17 +65,10 @@ export function About() {
         </div>
       </section>
 
-      <section className="container py-14">
-        <OwnerNote>
-          Bu hikâye metni örnektir. Annenizin gerçek hikâyesini, üretim
-          sürecinizi ve markanızın doğuşunu buraya yazarak müşterilerle samimi
-          bir bağ kurabilirsiniz.
-        </OwnerNote>
-        <div className="mt-8 text-center">
-          <Link to="/magaza" className="btn-primary">
-            Çantaları keşfet
-          </Link>
-        </div>
+      <section className="container py-14 text-center">
+        <Link to="/magaza" className="btn-primary">
+          Çantaları keşfet
+        </Link>
       </section>
     </div>
   );

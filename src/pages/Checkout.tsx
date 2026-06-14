@@ -7,7 +7,6 @@ import {
   CreditCard,
   Lock,
   ShieldCheck,
-  Info,
 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
@@ -303,25 +302,6 @@ export function Checkout() {
                   </span>
                 </label>
               ))}
-            </div>
-
-            {/* Demo / canlı ödeme uyarısı */}
-            <div className="mt-4 flex items-start gap-2 rounded-xl border border-dashed border-clay-300 bg-clay-50/70 px-4 py-3 text-sm text-clay-600">
-              <Info className="mt-0.5 h-4 w-4 shrink-0" />
-              <p>
-                {isLivePayment() ? (
-                  <>
-                    <strong>Canlı ödeme modu.</strong> Shopier ödeme sayfasına
-                    yönlendirileceksiniz.
-                  </>
-                ) : (
-                  <>
-                    <strong>Demo / test modu:</strong> Bu siparişte gerçek
-                    ödeme alınmaz. Gerçek Shopier bağlantısı sahibi tarafından
-                    yapıldığında bu adım otomatik aktif olur.
-                  </>
-                )}
-              </p>
             </div>
           </Section>
         </div>

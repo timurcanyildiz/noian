@@ -29,7 +29,6 @@ import { Account } from "@/pages/Account";
 import { About } from "@/pages/About";
 import { Contact } from "@/pages/Contact";
 import { Faq } from "@/pages/Faq";
-import { OwnerGuide } from "@/pages/OwnerGuide";
 import { NotFound } from "@/pages/NotFound";
 import {
   ShippingPolicy,
@@ -94,9 +93,6 @@ export default function App() {
                   path="/on-bilgilendirme-formu"
                   element={<PreliminaryInfo />}
                 />
-
-                {/* Site sahibi rehberi */}
-                <Route path="/sahip-rehberi" element={<OwnerGuide />} />
 
                 <Route path="*" element={<NotFound />} />
                     </Route>

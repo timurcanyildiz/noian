@@ -53,22 +53,6 @@ export function Rating({ value, className }: { value: number; className?: string
   );
 }
 
-/**
- * Sahibinin değiştirmesi gereken yerleri belirten not kutusu.
- * Bu kutular yalnızca sahibe rehberlik içindir; istenirse kaldırılabilir.
- */
-export function OwnerNote({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="owner-note flex gap-2">
-      <span aria-hidden className="font-bold">⚠️</span>
-      <p className="flex-1">
-        <span className="font-bold">Sahibine not: </span>
-        {children}
-      </p>
-    </div>
-  );
-}
-
 /** Miktar ayarlayıcı (+ / -) */
 export function QuantityStepper({
   value,

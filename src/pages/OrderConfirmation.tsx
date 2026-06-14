@@ -86,22 +86,6 @@ export function OrderConfirmation() {
                 {order.shippingAddress.district}/{order.shippingAddress.city}
               </p>
             </div>
-
-            {order.paymentStatus === "test" && (
-              <p className="owner-note mt-4">
-                ⚠️ <strong>Sahibine not:</strong> Bu bir <strong>test
-                siparişidir</strong>, gerçek ödeme alınmamıştır. Shopier canlı
-                moduna geçince bu sipariş gerçek ödeme ile oluşturulur.
-              </p>
-            )}
-
-            {order.paymentMethod === "havale" && (
-              <p className="owner-note mt-4">
-                ⚠️ <strong>Sahibine not:</strong> Havale/EFT seçildiğinde
-                müşteriye IBAN bilgilerinizi iletmeyi unutmayın. (Otomatik
-                e-posta için backend bağlanmalı.)
-              </p>
-            )}
           </div>
         </div>
       )}

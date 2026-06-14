@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { Info } from "lucide-react";
 
 /** Giriş/Kayıt sayfaları için ortak, sıcak görünümlü kabuk. */
 export function AuthShell({
@@ -32,16 +31,6 @@ export function AuthShell({
         {footer && (
           <p className="mt-5 text-center text-sm text-cocoa-500">{footer}</p>
         )}
-
-        {/* Demo bilgilendirme notu */}
-        <div className="mt-5 flex items-start gap-2 rounded-xl border border-dashed border-clay-200 bg-clay-50/60 px-3 py-2.5 text-xs text-clay-600">
-          <Info className="mt-0.5 h-4 w-4 shrink-0" />
-          <p>
-            <strong>Demo modu:</strong> Üyelik bilgileri şu an yalnızca bu
-            tarayıcıda saklanır. Sipariş vermek için üyelik zorunlu değildir;
-            misafir olarak da alışveriş yapabilirsiniz.
-          </p>
-        </div>
       </div>
     </div>
   );

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Mail, Phone, Instagram, MapPin, CheckCircle2 } from "lucide-react";
 import { FormField, validators } from "@/components/FormField";
-import { OwnerNote } from "@/components/common";
 import { useSettings } from "@/context/SettingsContext";
 import { cn } from "@/lib/utils";
 
@@ -20,7 +19,6 @@ export function Contact() {
     const cleaned = Object.fromEntries(Object.entries(n).filter(([, v]) => v));
     setErrors(cleaned);
     if (Object.keys(cleaned).length) return;
-    // ⚠️ DEMO: Mesaj gönderimi backend gerektirir. Şimdilik sadece onay gösterilir.
     setSent(true);
   };
 
@@ -44,10 +42,6 @@ export function Contact() {
             <ContactRow icon={Instagram} label="Instagram" value="@noianbags" href={settings.contact.instagram} />
             <ContactRow icon={MapPin} label="Konum" value={settings.contact.addressShort} />
           </div>
-          <OwnerNote>
-            Yukarıdaki iletişim bilgilerini <strong>Yönetim Paneli →
-            Ayarlar</strong> bölümünden düzenleyebilirsiniz.
-          </OwnerNote>
         </div>
 
         <div className="card p-6 sm:p-8">
@@ -57,11 +51,6 @@ export function Contact() {
               <h2 className="mt-3 text-xl">Mesajınız alındı</h2>
               <p className="mt-2 text-sm text-cocoa-400">
                 En kısa sürede size geri döneceğiz. Teşekkürler!
-              </p>
-              <p className="owner-note mt-4 text-left">
-                ⚠️ <strong>Sahibine not:</strong> Form mesajının gerçekten size
-                ulaşması için bir backend/e-posta servisi (örn. Supabase Edge
-                Function) bağlanmalıdır.
               </p>
             </div>
           ) : (

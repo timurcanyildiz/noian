@@ -41,11 +41,6 @@ export function ForgotPassword() {
             Eğer <strong>{email}</strong> ile kayıtlı bir hesap varsa, şifre
             sıfırlama bağlantısı gönderildi.
           </p>
-          <p className="owner-note mt-4 text-left">
-            ⚠️ <strong>Sahibine not:</strong> Gerçek e-posta gönderimi için bir
-            e-posta servisi (örn. Resend) bağlanmalıdır. Demo'da e-posta
-            gönderilmez.
-          </p>
         </div>
       ) : (
         <form onSubmit={submit} noValidate className="flex flex-col gap-4">
